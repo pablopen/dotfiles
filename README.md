@@ -53,7 +53,7 @@ Config files (`~/.zshrc`, `~/.gitconfig`, `~/.ssh/config`, mise and VS Code sett
 
 - **An app**: a `cask` line in `Brewfile` (names at [formulae.brew.sh](https://formulae.brew.sh/cask/)).
 - **A command-line tool**: a line in `mise/global.toml`. If mise's registry entry is broken, `"github:owner/repo" = "latest"` fetches the binary from its GitHub releases.
-- **A Terminal profile**: drop the `.terminal` file in `terminal/`; all of them are imported, and `.chezmoidata.toml` names the default.
+- **A Terminal profile**: drop the `.terminal` file in `terminal/`; all of them are imported, and `.chezmoidata.toml` names the default. `terminal/preview.sh` opens a window per profile to compare them (`terminal/preview.sh "OkSolar Dark" Nightfox` for just some).
 - **An install step**: a script in `chezmoi/.chezmoiscripts/`, numbered for its place in the order.
 
 ## Credits
