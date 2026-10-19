@@ -1,0 +1,8 @@
+# Values available to templates as {{ .git.name }}, {{ .terminal.profile }}, ...
+
+[git]
+name = "Pablo M."
+email = "3741498+pablopen@users.noreply.github.com"
+
+[terminal]
+profile = "Solarized Dark"

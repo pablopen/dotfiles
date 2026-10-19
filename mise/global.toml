@@ -1,0 +1,6 @@
+[tools]
+python = "3.13"
+uv = "latest"
+# Straight from GitHub releases: mise's registry entry for fastfetch doesn't
+# know about the macOS universal build.
+"github:fastfetch-cli/fastfetch" = "latest"

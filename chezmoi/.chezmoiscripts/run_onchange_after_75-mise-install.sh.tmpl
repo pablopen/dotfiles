@@ -1,0 +1,8 @@
+#!/bin/bash
+# Installs the tools pinned in mise/global.toml. Re-runs whenever that file
+# changes, because its hash is part of this script:
+# {{ include "../mise/global.toml" | sha256sum }}
+set -euo pipefail
+
+echo "==> Installing mise tools"
+"$HOME/.local/bin/mise" install --quiet

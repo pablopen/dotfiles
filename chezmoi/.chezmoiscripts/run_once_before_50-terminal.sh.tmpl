@@ -1,0 +1,27 @@
+#!/bin/bash
+# Terminal.app profiles: imports every profile in the repo's terminal/ folder
+# and makes the one named in .chezmoidata.toml the default.
+set -euo pipefail
+
+default="{{ .terminal.profile }}"
+dir="{{ .chezmoi.sourceDir }}/../terminal"
+
+exists() {
+  osascript -e "tell application \"Terminal\" to exists settings set \"$1\"" | grep -q true
+}
+
+for file in "$dir"/*.terminal; do
+  name="$(basename "$file" .terminal)"
+  if ! exists "$name"; then
+    echo "==> Importing Terminal profile: $name"
+    open "$file"
+    for _ in $(seq 20); do exists "$name" && break; sleep 0.5; done
+  fi
+done
+
+osascript <<EOF
+tell application "Terminal"
+  set default settings to settings set "$default"
+  set startup settings to settings set "$default"
+end tell
+EOF

@@ -1,0 +1,15 @@
+#!/bin/bash
+# Homebrew, for the GUI apps and fonts in the Brewfile at the repo root.
+# Re-runs whenever the Brewfile changes, because its hash is part of this script:
+# {{ include "../Brewfile" | sha256sum }}
+set -euo pipefail
+
+if [[ ! -x /opt/homebrew/bin/brew && ! -x /usr/local/bin/brew ]]; then
+  echo "==> Installing Homebrew (asks for your password)"
+  NONINTERACTIVE=1 /bin/bash -c \
+    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv)"
+
+echo "==> brew bundle"
+brew bundle --file="{{ .chezmoi.sourceDir }}/../Brewfile" --no-upgrade

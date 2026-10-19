@@ -1,0 +1,38 @@
+#!/bin/bash
+# SSH key for GitHub (kept in the keychain) and GitHub's host keys.
+# ~/.ssh/config itself is a managed file: see private_dot_ssh/private_config.
+set -euo pipefail
+
+key="$HOME/.ssh/id_ed25519"
+mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
+
+if [[ ! -f "$key" ]]; then
+  echo "==> Generating $key (pick a passphrase; the keychain will remember it)"
+  ssh-keygen -t ed25519 -f "$key"
+fi
+
+# Host keys come from GitHub's API over HTTPS, so they are verified by TLS.
+if ! ssh-keygen -F github.com >/dev/null 2>&1; then
+  meta=$(curl -fsSL https://api.github.com/meta)
+  i=0
+  while k=$(printf '%s' "$meta" | plutil -extract "ssh_keys.$i" raw -o - - 2>/dev/null); do
+    echo "github.com $k" >>"$HOME/.ssh/known_hosts"
+    i=$((i + 1))
+  done
+fi
+
+ssh-add --apple-use-keychain "$key" 2>/dev/null || true
+
+github_ok() {
+  local out
+  out=$(ssh -o IdentityFile="$key" -T git@github.com 2>&1 || true)
+  [[ "$out" == *"successfully authenticated"* ]]
+}
+
+if ! github_ok; then
+  pbcopy <"$key.pub"
+  echo "==> Public key copied to the clipboard. Paste it into the GitHub page that just opened."
+  open "https://github.com/settings/ssh/new"
+  read -r -p "    Press Enter once the key is added on GitHub... " _ </dev/tty || true
+  github_ok || echo "    GitHub still rejects the key; check with: ssh -T git@github.com"
+fi
